@@ -4,6 +4,7 @@
   fetchFromGitHub,
   buildLinux,
   variant,
+  isRt,
   ...
 }@args:
 
@@ -40,7 +41,7 @@ let
       args
       // {
         inherit version;
-        pname = "linux-${if isLqx then "lqx" else "zen"}";
+        pname = "linux-${if isLqx then "lqx" else "zen"}${if isRt then "-rt" else ""}";
         modDirVersion = lib.versions.pad 3 "${version}-${suffix}";
         isZen = true;
 
@@ -69,8 +70,9 @@ let
             DEFAULT_FQ_CODEL = yes;
 
             # Preempt (low-latency)
-            PREEMPT = mkKernelOverride yes;
-            PREEMPT_VOLUNTARY = mkKernelOverride no;
+            PREEMPT = mkKernelOverride (if isRt then unset else yes);
+            PREEMPT_VOLUNTARY = mkKernelOverride (if isRt then unset else no);
+            PREEMPT_RT = mkKernelOverride (if isRt then yes else unset);
 
             # Preemptible tree-based hierarchical RCU
             TREE_RCU = yes;
@@ -105,6 +107,11 @@ let
             HZ = freeform "1000";
             HZ_1000 = yes;
 
+          }
+          // lib.optionalAttrs (isRt) {
+            # FIXME: i have no idea why this needs to be removed
+            DRM_I915_GVT = mkKernelOverride unset;
+            DRM_I915_GVT_KVMGT = mkKernelOverride unset;
           }
           // lib.optionalAttrs (isLqx) {
             # https://github.com/damentz/liquorix-package/commit/07b176edc002f2a7825ae181613e1f79a3650fd2

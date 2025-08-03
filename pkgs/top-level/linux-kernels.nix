@@ -258,8 +258,26 @@ in
           ];
         };
 
+        linux_zen_rt = zenKernels {
+          variant = "zen";
+          isRt = true;
+          kernelPatches = [
+            kernelPatches.bridge_stp_helper
+            kernelPatches.request_key_helper
+          ];
+        };
+
         linux_lqx = zenKernels {
           variant = "lqx";
+          kernelPatches = [
+            kernelPatches.bridge_stp_helper
+            kernelPatches.request_key_helper
+          ];
+        };
+
+        linux_lqx_rt = zenKernels {
+          variant = "lqx";
+          isRt = true;
           kernelPatches = [
             kernelPatches.bridge_stp_helper
             kernelPatches.request_key_helper
@@ -788,7 +806,9 @@ in
       linux_6_12_hardened = recurseIntoAttrs (packagesFor kernels.linux_6_12_hardened);
 
       linux_zen = recurseIntoAttrs (packagesFor kernels.linux_zen);
+      linux_zen_rt = recurseIntoAttrs (packagesFor kernels.linux_zen_rt);
       linux_lqx = recurseIntoAttrs (packagesFor kernels.linux_lqx);
+      linux_lqx_rt = recurseIntoAttrs (packagesFor kernels.linux_lqx_rt);
       linux_xanmod = recurseIntoAttrs (packagesFor kernels.linux_xanmod);
       linux_xanmod_stable = recurseIntoAttrs (packagesFor kernels.linux_xanmod_stable);
       linux_xanmod_latest = recurseIntoAttrs (packagesFor kernels.linux_xanmod_latest);

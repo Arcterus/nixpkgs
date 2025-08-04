@@ -137,15 +137,15 @@ let
         + extraConfig
         + stdenv.hostPlatform.linux-kernel.extraConfig or "";
 
-      structuredConfigFromPatches = map (
-        {
-          extraStructuredConfig ? { },
-          ...
-        }:
-        {
-          settings = extraStructuredConfig;
-        }
-      ) kernelPatches;
+      # structuredConfigFromPatches = map (
+      #   {
+      #     extraStructuredConfig ? { },
+      #     ...
+      #   }:
+      #   {
+      #     settings = extraStructuredConfig;
+      #   }
+      # ) kernelPatches;
 
       # appends kernel patches extraConfig
       kernelConfigFun =
@@ -165,11 +165,16 @@ let
 
       configfile = stdenv.mkDerivation {
         inherit
+          kernelPatches
           ignoreConfigErrors
           autoModules
           preferBuiltin
           kernelArch
           extraMakeFlags
+          # structuredConfigFromPatches
+          # kernelPatches
+          intermediateNixConfig
+          defconfig
           ;
         pname = "linux-config";
         inherit version;
@@ -262,7 +267,15 @@ let
                   _file = "structuredExtraConfig";
                 }
               ]
-              ++ structuredConfigFromPatches;
+              ++ (map (
+                {
+                  extraStructuredConfig ? { },
+                  ...
+                }:
+                {
+                  settings = extraStructuredConfig;
+                }
+              ) kernelPatches);
             }).config;
 
           structuredConfig = moduleStructuredConfig.settings;

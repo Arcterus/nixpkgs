@@ -165,7 +165,6 @@ let
 
       configfile = stdenv.mkDerivation {
         inherit
-          kernelPatches
           ignoreConfigErrors
           autoModules
           preferBuiltin
@@ -269,11 +268,11 @@ let
               ]
               ++ (map (
                 {
-                  extraStructuredConfig ? { },
+                  structuredExtraConfig ? { },
                   ...
                 }:
                 {
-                  settings = extraStructuredConfig;
+                  settings = structuredExtraConfig;
                 }
               ) kernelPatches);
             }).config;

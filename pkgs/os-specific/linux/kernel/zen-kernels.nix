@@ -4,7 +4,7 @@
   fetchFromGitHub,
   buildLinux,
   variant,
-  isRt,
+  isRt ? false,
   ...
 }@args:
 

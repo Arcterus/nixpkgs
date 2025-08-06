@@ -207,6 +207,7 @@ let
 
         makeFlags =
           lib.concatStringsSep "" (lib.optionals (
+          # lib.optionals (
             stdenv.hostPlatform.linux-kernel ? makeFlags
           ) stdenv.hostPlatform.linux-kernel.makeFlags
           ++ extraMakeFlags);
@@ -226,12 +227,11 @@ let
 
           # Get a basic config file for later refinement with $generateConfig.
           # make $makeFlags \
-          echo "${configfile.makeFlags}"
-          echo ${configfile.makeFlags}
-          make \
+          # make ''${makeFlagsArray[@]} \
+          make ${configfile.makeFlags} \
               -C . O="$buildRoot" $kernelBaseConfig \
-              ARCH=$kernelArch CROSS_COMPILE=${stdenv.cc.targetPrefix} \
-              ${configfile.makeFlags}
+              ARCH=$kernelArch CROSS_COMPILE=${stdenv.cc.targetPrefix} # \
+          # "''${makeFlagsArray[@]}"
 
           # Create the config file.
           echo "generating kernel configuration..."

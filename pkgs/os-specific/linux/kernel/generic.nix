@@ -206,10 +206,10 @@ let
           if defconfig != null then defconfig else stdenv.hostPlatform.linux-kernel.baseConfig;
 
         makeFlags =
-          lib.optionals (
+          lib.concatStringsSep "" (lib.optionals (
             stdenv.hostPlatform.linux-kernel ? makeFlags
           ) stdenv.hostPlatform.linux-kernel.makeFlags
-          ++ extraMakeFlags;
+          ++ extraMakeFlags);
 
         postPatch = kernel.postPatch + ''
           # Patch kconfig to print "###" after every question so that

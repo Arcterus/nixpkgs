@@ -225,7 +225,8 @@ let
           export buildRoot="''${buildRoot:-build}"
 
           # Get a basic config file for later refinement with $generateConfig.
-          make $makeFlags \
+          # make $makeFlags \
+          make \
               -C . O="$buildRoot" $kernelBaseConfig \
               ARCH=$kernelArch CROSS_COMPILE=${stdenv.cc.targetPrefix} \
               $makeFlags

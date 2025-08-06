@@ -226,12 +226,12 @@ let
 
           # Get a basic config file for later refinement with $generateConfig.
           # make $makeFlags \
-          echo "$makeFlags"
-          echo $makeFlags
+          echo "${configfile.makeFlags}"
+          echo ${configfile.makeFlags}
           make \
               -C . O="$buildRoot" $kernelBaseConfig \
               ARCH=$kernelArch CROSS_COMPILE=${stdenv.cc.targetPrefix} \
-              $makeFlags
+              ${configfile.makeFlags}
 
           # Create the config file.
           echo "generating kernel configuration..."

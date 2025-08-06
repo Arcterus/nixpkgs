@@ -306,10 +306,10 @@ lib.makeOverridable (
 
           # reads the existing .config file and prompts the user for options in
           # the current kernel source that are not found in the file.
-          make ${makeFlags} oldconfig
+          make "''${makeFlagsArray[@]}" oldconfig
           runHook postConfigure
 
-          make ${makeFlags} prepare
+          make "''${makeFlagsArray[@]}" prepare
           actualModDirVersion="$(cat $buildRoot/include/config/kernel.release)"
           if [ "$actualModDirVersion" != "${modDirVersion}" ]; then
             echo "Error: modDirVersion ${modDirVersion} specified in the Nix expression is wrong, it should be: $actualModDirVersion"
@@ -435,7 +435,7 @@ lib.makeOverridable (
           if [ -z "''${dontStrip-}" ]; then
             installFlagsArray+=("INSTALL_MOD_STRIP=1")
           fi
-          make modules_install ${makeFlags} \
+          make modules_install "''${makeFlagsArray[@]}" \
             $installFlags "''${installFlagsArray[@]}"
           unlink $out/lib/modules/${modDirVersion}/build
           rm -f $out/lib/modules/${modDirVersion}/source
@@ -450,7 +450,7 @@ lib.makeOverridable (
           cd $dev/lib/modules/${modDirVersion}/source
 
           cp $buildRoot/{.config,Module.symvers} $dev/lib/modules/${modDirVersion}/build
-          make modules_prepare ${makeFlags} O=$dev/lib/modules/${modDirVersion}/build
+          make modules_prepare "''${makeFlagsArray[@]}" O=$dev/lib/modules/${modDirVersion}/build
 
           # For reproducibility, removes accidental leftovers from a `cc1` call
           # from a `try-run` call from the Makefile
@@ -545,10 +545,6 @@ lib.makeOverridable (
     ]
     ++ (stdenv.hostPlatform.linux-kernel.makeFlags or [ ])
     ++ extraMakeFlags;
-
-    makeFlags = lib.concatStringsSep " " ([
-      "'O=$(buildRoot)'"
-    ] ++ commonMakeFlags);
   in
 
   stdenv.mkDerivation (
@@ -568,10 +564,10 @@ lib.makeOverridable (
           "pie"
         ];
 
-        # makeFlags = lib.concatStringsSep " " [
-        #   "O=$(buildRoot)"
-        # ]
-        # ++ commonMakeFlags;
+        makeFlags = [
+          "O=$(buildRoot)"
+        ]
+        ++ commonMakeFlags;
 
         passthru = { inherit commonMakeFlags; };
 

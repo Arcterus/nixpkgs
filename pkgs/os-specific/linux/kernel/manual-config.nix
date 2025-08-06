@@ -290,12 +290,10 @@ lib.makeOverridable (
           unset src
         '';
 
-        preConfigure = ''
-          makeFlagsArray+=($extraMakeFlags)
-        '';
-
         configurePhase = ''
           runHook preConfigure
+
+          makeFlagsArray+=($extraMakeFlags)
 
           mkdir build
           export buildRoot="$(pwd)/build"

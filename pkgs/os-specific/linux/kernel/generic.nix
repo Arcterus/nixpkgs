@@ -237,6 +237,9 @@ let
               ARCH=$kernelArch CROSS_COMPILE=${stdenv.cc.targetPrefix} # \
           # "''${makeFlagsArray[@]}"
 
+          echo $makeFlags
+          exit 321938210
+
           # Create the config file.
           echo "generating kernel configuration..."
           ln -s "$kernelConfigPath" "$buildRoot/kernel-config"

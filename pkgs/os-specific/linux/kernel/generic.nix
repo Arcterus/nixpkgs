@@ -232,13 +232,13 @@ let
           # Get a basic config file for later refinement with $generateConfig.
           # make $makeFlags \
           # make ''${configfile.makeFlags} \
-          make "''${makeFlagsArray[@]}" \
+          make ''${makeFlagsArray[@]} \
               -C . O="$buildRoot" $kernelBaseConfig \
               ARCH=$kernelArch CROSS_COMPILE=${stdenv.cc.targetPrefix} # \
           # "''${makeFlagsArray[@]}"
 
-          echo $makeFlags
-          exit 321938210
+          echo ''${makeFlagsArray[@]}
+          # exit 321938210
 
           # Create the config file.
           echo "generating kernel configuration..."
@@ -246,7 +246,7 @@ let
           DEBUG=1 ARCH=$kernelArch CROSS_COMPILE=${stdenv.cc.targetPrefix} \
             KERNEL_CONFIG="$buildRoot/kernel-config" AUTO_MODULES=$autoModules \
             PREFER_BUILTIN=$preferBuiltin BUILD_ROOT="$buildRoot" SRC=. \
-            perl -w $generateConfig "''${makeFlagsArray[@]}"
+            perl -w $generateConfig ''${makeFlagsArray[@]}
             # perl -w $generateConfig ''${configfile.makeFlags}
         '';
 

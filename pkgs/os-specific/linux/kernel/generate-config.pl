@@ -20,7 +20,7 @@ my $preferBuiltin = $ENV{'PREFER_BUILTIN'};
 my $ignoreConfigErrors = $ENV{'ignoreConfigErrors'};
 my $buildRoot = $ENV{'BUILD_ROOT'};
 # my $makeFlags = $ENV{'MAKE_FLAGS'};
-my $makeFlags = qq{@ARGV};
+# my $makeFlags = qq{@ARGV};
 $SIG{PIPE} = 'IGNORE';
 
 # Read the answers.

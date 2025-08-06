@@ -318,11 +318,15 @@ lib.makeOverridable (
             exit 1
           fi
 
-          buildFlagsArray+=($extraMakeFlags)
+          # buildFlagsArray+=($extraMakeFlags)
           buildFlagsArray+=("KBUILD_BUILD_TIMESTAMP=$(date -u -d @$SOURCE_DATE_EPOCH)")
 
           cd $buildRoot
         '';
+
+        preBuild = lib.concatStringsSep "\n" (map (flag: "buildFlagsArray+=(${flag})") extraMakeFlags);
+        #   buildFlagsArray+=($extraMakeFlags)
+        # '';
 
         buildFlags = [
           "KBUILD_BUILD_VERSION=1-NixOS"

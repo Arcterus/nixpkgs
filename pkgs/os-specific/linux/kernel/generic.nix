@@ -8,6 +8,8 @@
   gmp ? null,
   libmpc ? null,
   mpfr ? null,
+  bc,
+  elfutils,
   pahole,
   lib,
   stdenv,
@@ -191,6 +193,8 @@ let
           mpfr
           bison
           flex
+          bc
+          elfutils
         ]
         ++ lib.optional (lib.versionAtLeast version "5.2") pahole
         ++ lib.optionals withRust [

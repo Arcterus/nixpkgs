@@ -226,6 +226,8 @@ let
 
           # Get a basic config file for later refinement with $generateConfig.
           # make $makeFlags \
+          echo "$makeFlags"
+          echo $makeFlags
           make \
               -C . O="$buildRoot" $kernelBaseConfig \
               ARCH=$kernelArch CROSS_COMPILE=${stdenv.cc.targetPrefix} \

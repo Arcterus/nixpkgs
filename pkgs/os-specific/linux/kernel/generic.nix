@@ -206,11 +206,11 @@ let
           if defconfig != null then defconfig else stdenv.hostPlatform.linux-kernel.baseConfig;
 
         makeFlags =
-          lib.concatStringsSep "" (lib.optionals (
-          # lib.optionals (
+          # lib.concatStringsSep "" (lib.optionals (
+          lib.optionals (
             stdenv.hostPlatform.linux-kernel ? makeFlags
           ) stdenv.hostPlatform.linux-kernel.makeFlags
-          ++ extraMakeFlags);
+          ++ extraMakeFlags;
 
         postPatch = kernel.postPatch + ''
           # Patch kconfig to print "###" after every question so that
@@ -227,8 +227,8 @@ let
 
           # Get a basic config file for later refinement with $generateConfig.
           # make $makeFlags \
-          # make ''${makeFlagsArray[@]} \
-          make ${configfile.makeFlags} \
+          # make ''${configfile.makeFlags} \
+          make "''${makeFlagsArray[@]}" \
               -C . O="$buildRoot" $kernelBaseConfig \
               ARCH=$kernelArch CROSS_COMPILE=${stdenv.cc.targetPrefix} # \
           # "''${makeFlagsArray[@]}"
@@ -238,8 +238,9 @@ let
           ln -s "$kernelConfigPath" "$buildRoot/kernel-config"
           DEBUG=1 ARCH=$kernelArch CROSS_COMPILE=${stdenv.cc.targetPrefix} \
             KERNEL_CONFIG="$buildRoot/kernel-config" AUTO_MODULES=$autoModules \
-            PREFER_BUILTIN=$preferBuiltin BUILD_ROOT="$buildRoot" SRC=. MAKE_FLAGS="$makeFlags" \
-            perl -w $generateConfig
+            PREFER_BUILTIN=$preferBuiltin BUILD_ROOT="$buildRoot" SRC=. \
+            perl -w $generateConfig "''${makeFlagsArray[@]}"
+            # perl -w $generateConfig ''${configfile.makeFlags}
         '';
 
         installPhase = "mv $buildRoot/.config $out";

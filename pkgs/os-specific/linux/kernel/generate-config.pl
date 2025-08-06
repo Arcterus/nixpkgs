@@ -19,7 +19,8 @@ my $autoModules = $ENV{'AUTO_MODULES'};
 my $preferBuiltin = $ENV{'PREFER_BUILTIN'};
 my $ignoreConfigErrors = $ENV{'ignoreConfigErrors'};
 my $buildRoot = $ENV{'BUILD_ROOT'};
-my $makeFlags = $ENV{'MAKE_FLAGS'};
+# my $makeFlags = $ENV{'MAKE_FLAGS'};
+my $makeFlags = qq{@ARGV};
 $SIG{PIPE} = 'IGNORE';
 
 # Read the answers.
@@ -44,10 +45,14 @@ sub runConfig {
     #
     # We have to pass through the target toolchain, because `make config` checks them for versions. This is
     # required to get clang LTO working, among other things.
-    my $pid = open2(\*IN, \*OUT,
-                    "make -C $ENV{SRC} O=$buildRoot config"
-                    . " SHELL=bash ARCH=$ENV{ARCH} CROSS_COMPILE=$ENV{CROSS_COMPILE}"
-                    . " $makeFlags");
+    my @cmd_args = ("make", "-C", "$ENV{SRC}", "O=$buildRoot config",
+                    "SHELL=bash", "ARCH=$ENV{ARCH}", "CROSS_COMPILE=$ENV{CROSS_COMPILE}");
+    push(@cmd_args, @ARGV);
+    my $pid = open2(\*IN, \*OUT, @cmd_args);
+                    # "make", "-C", "$ENV{SRC}", "O=$buildRoot config",
+                    # "SHELL=bash", "ARCH=$ENV{ARCH}", "CROSS_COMPILE=$ENV{CROSS_COMPILE}",
+                    # @ARGV);
+                    # . " $makeFlags");
 
     # Parse the output, look for questions and then send an
     # appropriate answer.

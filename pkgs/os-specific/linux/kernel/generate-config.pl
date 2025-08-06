@@ -45,7 +45,7 @@ sub runConfig {
     #
     # We have to pass through the target toolchain, because `make config` checks them for versions. This is
     # required to get clang LTO working, among other things.
-    my @cmd_args = ("make", "-C", "$ENV{SRC}", "O=$buildRoot config",
+    my @cmd_args = ("make", "-C", "$ENV{SRC}", "O=$buildRoot", "config",
                     "SHELL=bash", "ARCH=$ENV{ARCH}", "CROSS_COMPILE=$ENV{CROSS_COMPILE}");
     push(@cmd_args, @ARGV);
     my $pid = open2(\*IN, \*OUT, @cmd_args);

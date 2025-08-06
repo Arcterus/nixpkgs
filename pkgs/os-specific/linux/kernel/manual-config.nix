@@ -316,6 +316,7 @@ lib.makeOverridable (
             exit 1
           fi
 
+          buildFlagsArray+=(''${extraMakeFlags[@]})
           buildFlagsArray+=("KBUILD_BUILD_TIMESTAMP=$(date -u -d @$SOURCE_DATE_EPOCH)")
 
           cd $buildRoot

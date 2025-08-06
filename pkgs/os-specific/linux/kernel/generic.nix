@@ -213,8 +213,8 @@ let
           # lib.concatStringsSep "" (lib.optionals (
           lib.optionals (
             stdenv.hostPlatform.linux-kernel ? makeFlags
-          ) stdenv.hostPlatform.linux-kernel.makeFlags
-          ++ extraMakeFlags;
+          ) stdenv.hostPlatform.linux-kernel.makeFlags;
+          # ++ extraMakeFlags;
 
         postPatch = kernel.postPatch + ''
           # Patch kconfig to print "###" after every question so that
@@ -225,6 +225,10 @@ let
         preUnpack = kernel.preUnpack or "";
 
         inherit (kernel) src patches;
+
+        preConfigure = ''
+          makeFlagArray+=($extraMakeFlags)
+        '';
 
         buildPhase = ''
           export buildRoot="''${buildRoot:-build}"

@@ -290,6 +290,10 @@ lib.makeOverridable (
           unset src
         '';
 
+        preConfigure = ''
+          makeFlagsArray+=($extraMakeFlags)
+        '';
+
         configurePhase = ''
           runHook preConfigure
 
@@ -306,17 +310,17 @@ lib.makeOverridable (
 
           # reads the existing .config file and prompts the user for options in
           # the current kernel source that are not found in the file.
-          make $makeFlags "''${makeFlagsArray[@]}" "''${extraMakeFlagsArray[@]}" oldconfig
+          make $makeFlags "''${makeFlagsArray[@]}" oldconfig
           runHook postConfigure
 
-          make $makeFlags "''${makeFlagsArray[@]}" "''${extraMakeFlagsArray[@]}" prepare
+          make $makeFlags "''${makeFlagsArray[@]}" prepare
           actualModDirVersion="$(cat $buildRoot/include/config/kernel.release)"
           if [ "$actualModDirVersion" != "${modDirVersion}" ]; then
             echo "Error: modDirVersion ${modDirVersion} specified in the Nix expression is wrong, it should be: $actualModDirVersion"
             exit 1
           fi
 
-          buildFlagsArray+=(''${extraMakeFlags[@]})
+          buildFlagsArray+=($extraMakeFlags)
           buildFlagsArray+=("KBUILD_BUILD_TIMESTAMP=$(date -u -d @$SOURCE_DATE_EPOCH)")
 
           cd $buildRoot
@@ -436,7 +440,7 @@ lib.makeOverridable (
           if [ -z "''${dontStrip-}" ]; then
             installFlagsArray+=("INSTALL_MOD_STRIP=1")
           fi
-          make modules_install $makeFlags "''${makeFlagsArray[@]}" "''${extraMakeFlagsArray[@]}" \
+          make modules_install $makeFlags "''${makeFlagsArray[@]}" \
             $installFlags "''${installFlagsArray[@]}"
           unlink $out/lib/modules/${modDirVersion}/build
           rm -f $out/lib/modules/${modDirVersion}/source
@@ -451,7 +455,7 @@ lib.makeOverridable (
           cd $dev/lib/modules/${modDirVersion}/source
 
           cp $buildRoot/{.config,Module.symvers} $dev/lib/modules/${modDirVersion}/build
-          make modules_prepare $makeFlags "''${makeFlagsArray[@]}" "''${extraMakeFlagsArray[@]}" O=$dev/lib/modules/${modDirVersion}/build
+          make modules_prepare $makeFlags "''${makeFlagsArray[@]}" O=$dev/lib/modules/${modDirVersion}/build
 
           # For reproducibility, removes accidental leftovers from a `cc1` call
           # from a `try-run` call from the Makefile
